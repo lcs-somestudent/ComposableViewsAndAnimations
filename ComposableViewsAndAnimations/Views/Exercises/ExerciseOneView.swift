@@ -14,9 +14,21 @@ struct ExerciseOneView: View {
     
     // Controls whether this view is showing or not
     @Binding var showThisView: Bool
+    
+    // Initialize a timer that will fire in one second
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
         
     // Controls what typeface the text is shown in
     @State private var typeFace: String = "Helvetica-Neue"
+    
+    // Controls the size of the text
+    @State private var scaleFactor: CGFloat = 1.0
+    
+    // Controls whether the text is red or not
+    @State private var isRed = false
+    
+    // Controls whether the text is lower down or not
+    @State private var isLower = false
 
     // Whether to apply the animation
     @State private var useAnimation = false
@@ -40,9 +52,40 @@ struct ExerciseOneView: View {
             
             VStack {
                 
+                // Colour is not animatable for text
                 Text(typeFace)
                     .font(.custom(typeFace, size: 30.0))
-                
+                    .foregroundColor(isRed ? .red : .blue)
+                    .offset(x: 0, y: isLower ? -50.0 : 0)
+                    .scaleEffect(scaleFactor)
+                    .animation(useAnimation ? .easeInOut(duration: 2.5) : .none)
+                    .onTapGesture {
+                        isRed.toggle()
+                        isLower.toggle()
+                        if scaleFactor == 1.0 {
+                            scaleFactor = 1.25
+                        } else {
+                            scaleFactor = 1.0
+                        }
+                    }
+
+                // Colour is animated for a shape
+                Circle()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(isRed ? .red : .blue)
+                    .offset(x: 0, y: isLower ? -50.0 : 0)
+                    .scaleEffect(scaleFactor)
+                    .animation(useAnimation ? .easeInOut(duration: 2.5) : .none)
+                    .onTapGesture {
+                        isRed.toggle()
+                        isLower.toggle()
+                        if scaleFactor == 1.0 {
+                            scaleFactor = 1.25
+                        } else {
+                            scaleFactor = 1.0
+                        }
+                    }
+
             }
             .navigationTitle("Exercise 1")
             .toolbar {
@@ -52,6 +95,16 @@ struct ExerciseOneView: View {
                     }
                 }
             }
+            .onReceive(timer) { input in
+                
+                // Set the flag to enable animations
+                useAnimation = true
+                
+                // Stop the timer from continuing to fire
+                timer.upstream.connect().cancel()
+                
+            }
+
 
         }
         
