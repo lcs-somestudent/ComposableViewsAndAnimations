@@ -14,12 +14,18 @@ struct ExerciseTwoView: View {
     
     // Controls whether this view is showing or not
     @Binding var showThisView: Bool
-        
+    
     // Controls what typeface the text is shown in
     @State private var typeFace: String = "Helvetica-Neue"
-
-    // Whether to apply the animation
-    @State private var useAnimation = false
+    
+    // Controls the size of the text
+    @State private var scaleFactor: CGFloat = 1.0
+    
+    // Controls whether the text is red or not
+    @State private var isRed = false
+    
+    // Controls whether the text is lower down or not
+    @State private var isLower = false
 
     // MARK: Computed properties
 
@@ -40,9 +46,42 @@ struct ExerciseTwoView: View {
             
             VStack {
                 
+                // Colour is not animatable for text
                 Text(typeFace)
                     .font(.custom(typeFace, size: 30.0))
-                
+                    .foregroundColor(isRed ? .red : .blue)
+                    .offset(x: 0, y: isLower ? -50.0 : 0)
+                    .scaleEffect(scaleFactor)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 2.5)) {
+                            isRed.toggle()
+                        }
+                        isLower.toggle()
+                        if scaleFactor == 1.0 {
+                            scaleFactor = 1.25
+                        } else {
+                            scaleFactor = 1.0
+                        }
+                    }
+
+                // Colour is animated for a shape
+                Circle()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(isRed ? .red : .blue)
+                    .offset(x: 0, y: isLower ? -50.0 : 0)
+                    .scaleEffect(scaleFactor)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 2.5)) {
+                            isRed.toggle()
+                        }
+                        isLower.toggle()
+                        if scaleFactor == 1.0 {
+                            scaleFactor = 1.25
+                        } else {
+                            scaleFactor = 1.0
+                        }
+                    }
+
             }
             .navigationTitle("Exercise 2")
             .toolbar {
